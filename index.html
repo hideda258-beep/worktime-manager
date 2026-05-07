@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
   <title>勤務時間管理アプリ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -43,6 +42,12 @@
       }
       .time-colon {
         font-size: 1.8rem !important;
+      }
+      .setting-time-input {
+        width: 50px !important;
+        max-width: 20% !important;
+        font-size: 1.3rem !important;
+        padding: 6px 2px !important;
       }
       .large-button {
         width: 100% !important;
@@ -195,12 +200,13 @@
 
     .name-box {
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       width: 85%;
       max-width: 400px;
       margin: 16px auto 12px auto;
-      padding: 10px 20px;
+      padding: 8px 20px;
       border-radius: 12px;
       text-align: center;
     }
@@ -253,7 +259,7 @@
       .name-box {
         width: auto !important;
         max-width: fit-content !important;
-        padding: 8px 16px !important;
+        padding: 6px 16px !important;
         margin: 0 !important;
         margin-left: auto !important;
       }
@@ -426,7 +432,10 @@
     </h1>
     
     <div class="header-user-row">
-      <div id="headerUserName" class="name-box bg-[#FFF8CC] text-gray-800 text-xl sm:text-2xl font-bold shadow-sm tracking-widest border-2 border-yellow-200" style="display: none; font-family: 'UDGothic', 'UD デジタル 教科書体 N-R', 'BIZ UDPGothic', sans-serif;"></div>
+      <div id="headerUserBox" class="name-box bg-[#FFF8CC] text-gray-800 shadow-sm border-2 border-yellow-200" style="display: none; font-family: 'UDGothic', 'UD デジタル 教科書体 N-R', 'BIZ UDPGothic', sans-serif;">
+        <div id="headerUserName" class="text-xl sm:text-2xl font-bold tracking-widest"></div>
+        <div id="headerUserContract" class="text-xs sm:text-sm text-gray-600 font-bold mt-1">定時：--:--</div>
+      </div>
 
       <button onclick="openSettings()" class="setting-btn bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-300 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-sm sm:text-base font-bold shadow-sm hover:bg-white active:scale-95 transition-all flex items-center gap-1.5 sm:gap-2">
         <span class="text-base sm:text-lg">⚙️</span>
@@ -577,42 +586,71 @@
   </div>
 
   <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white p-6 sm:p-8 rounded-2xl w-11/12 max-w-sm max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all border-4 border-gray-300">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center border-b-2 border-gray-200 pb-2">⚙️ 初期設定</h2>
+    <div class="bg-white p-5 sm:p-6 rounded-2xl w-[95%] max-w-sm max-h-[95vh] overflow-y-auto shadow-2xl transform transition-all border-4 border-gray-300 flex flex-col">
+      <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 text-center border-b-2 border-gray-200 pb-2">⚙️ 初期設定</h2>
       
+      <!-- 姓・名（横並び） -->
+      <div class="flex gap-3 mb-4">
+        <div class="flex-1 text-left">
+          <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">姓</label>
+          <input type="text" id="settingLastName" class="input-field mb-0 py-2 px-3 text-lg" placeholder="例：山田" onkeydown="if(event.key === 'Enter' && !event.isComposing) { event.preventDefault(); this.blur(); }">
+        </div>
+        <div class="flex-1 text-left">
+          <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">名</label>
+          <input type="text" id="settingFirstName" class="input-field mb-0 py-2 px-3 text-lg" placeholder="例：太郎" onkeydown="if(event.key === 'Enter' && !event.isComposing) { event.preventDefault(); this.blur(); }">
+        </div>
+      </div>
+      
+      <!-- アイコン -->
       <div class="mb-4 text-left">
-        <label class="block text-sm font-bold text-gray-700 mb-2">姓</label>
-        <input type="text" id="settingLastName" class="input-field mb-0 py-3 px-4 text-xl sm:text-2xl" placeholder="例：山田" onkeydown="if(event.key === 'Enter' && !event.isComposing) { event.preventDefault(); this.blur(); }">
-      </div>
-      <div class="mb-6 text-left">
-        <label class="block text-sm font-bold text-gray-700 mb-2">名</label>
-        <input type="text" id="settingFirstName" class="input-field mb-0 py-3 px-4 text-xl sm:text-2xl" placeholder="例：太郎" onkeydown="if(event.key === 'Enter' && !event.isComposing) { event.preventDefault(); this.blur(); }">
-      </div>
-      
-      <div class="mb-6 text-left">
-        <label class="block text-sm font-bold text-gray-700 mb-2">アイコン</label>
-        <div class="flex gap-4">
-          <button type="button" id="btnIconMale" onclick="selectUserIcon('🙍🏻‍♂️')" class="flex-1 py-3 px-2 text-lg sm:text-xl font-bold btn-3d-flat">
+        <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">アイコン</label>
+        <div class="flex gap-3">
+          <button type="button" id="btnIconMale" onclick="selectUserIcon('🙍🏻‍♂️')" class="flex-1 py-2 px-2 text-base sm:text-lg font-bold btn-3d-flat">
             🙍🏻‍♂️ 男性
           </button>
-          <button type="button" id="btnIconFemale" onclick="selectUserIcon('🙍🏻‍♀️')" class="flex-1 py-3 px-2 text-lg sm:text-xl font-bold btn-3d-flat">
+          <button type="button" id="btnIconFemale" onclick="selectUserIcon('🙍🏻‍♀️')" class="flex-1 py-2 px-2 text-base sm:text-lg font-bold btn-3d-flat">
             🙍🏻‍♀️ 女性
           </button>
         </div>
       </div>
 
-      <div class="mb-8 text-left">
-        <label class="block text-sm font-bold text-gray-700 mb-2">昼休憩開始時刻<span class="font-normal text-xs ml-2 text-gray-500">（「通常休憩」の初期値）</span></label>
-        <div class="flex items-center gap-2 sm:gap-4 mt-2">
-          <input type="text" inputmode="numeric" id="settingRestStartHour" autocomplete="off" class="input-field time-input mb-0 w-24 sm:w-32 text-3xl sm:text-4xl font-bold text-gray-800 py-3 px-2 text-center placeholder-gray-300" placeholder="--">
-          <span class="time-colon text-3xl font-bold text-gray-500">：</span>
-          <input type="text" inputmode="numeric" id="settingRestStartMinute" autocomplete="off" class="input-field time-input mb-0 w-24 sm:w-32 text-3xl sm:text-4xl font-bold text-gray-800 py-3 px-2 text-center placeholder-gray-300" placeholder="--">
+      <!-- 通常勤務時間 -->
+      <div class="mb-4 text-left">
+        <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">🕒 通常勤務時間（契約）</label>
+        <div class="flex flex-col gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
+          <div class="flex flex-col items-center">
+            <span class="text-xs sm:text-sm font-bold text-gray-600 mb-1">【出勤時間】</span>
+            <div class="flex items-center justify-center gap-2">
+              <input type="text" inputmode="numeric" id="settingContractStartHour" autocomplete="off" class="input-field setting-time-input mb-0 text-xl sm:text-2xl font-bold text-gray-800 text-center placeholder-gray-300" placeholder="--">
+              <span class="text-lg sm:text-xl font-bold text-gray-500">：</span>
+              <input type="text" inputmode="numeric" id="settingContractStartMinute" autocomplete="off" class="input-field setting-time-input mb-0 text-xl sm:text-2xl font-bold text-gray-800 text-center placeholder-gray-300" placeholder="--">
+            </div>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-xs sm:text-sm font-bold text-gray-600 mb-1">【退勤時間】</span>
+            <div class="flex items-center justify-center gap-2">
+              <input type="text" inputmode="numeric" id="settingContractEndHour" autocomplete="off" class="input-field setting-time-input mb-0 text-xl sm:text-2xl font-bold text-gray-800 text-center placeholder-gray-300" placeholder="--">
+              <span class="text-lg sm:text-xl font-bold text-gray-500">：</span>
+              <input type="text" inputmode="numeric" id="settingContractEndMinute" autocomplete="off" class="input-field setting-time-input mb-0 text-xl sm:text-2xl font-bold text-gray-800 text-center placeholder-gray-300" placeholder="--">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 昼休憩開始時刻 -->
+      <div class="mb-6 text-left">
+        <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">☕ 昼休憩開始時刻 <span class="font-normal text-[10px] sm:text-xs text-gray-500">（「通常休憩」の初期値）</span></label>
+        <div class="flex items-center justify-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+          <input type="text" inputmode="numeric" id="settingRestStartHour" autocomplete="off" class="input-field setting-time-input mb-0 text-xl sm:text-2xl font-bold text-gray-800 text-center placeholder-gray-300" placeholder="--">
+          <span class="text-lg sm:text-xl font-bold text-gray-500">：</span>
+          <input type="text" inputmode="numeric" id="settingRestStartMinute" autocomplete="off" class="input-field setting-time-input mb-0 text-xl sm:text-2xl font-bold text-gray-800 text-center placeholder-gray-300" placeholder="--">
         </div>
       </div>
       
-      <div class="flex flex-col gap-3">
-        <button onclick="saveSettings()" class="w-full bg-blue-600 text-white font-bold text-xl py-4 rounded-xl shadow-md hover:bg-blue-700 active:translate-y-1 transition-colors">保存する</button>
-        <button onclick="closeSettings()" class="w-full bg-gray-500 text-white font-bold text-xl py-4 rounded-xl shadow-md hover:bg-gray-600 active:translate-y-1 transition-colors">閉じる</button>
+      <!-- ボタン -->
+      <div class="flex gap-3 mt-auto">
+        <button onclick="closeSettings()" class="flex-1 bg-gray-500 text-white font-bold text-base sm:text-lg py-3 rounded-xl shadow-md hover:bg-gray-600 active:translate-y-1 transition-colors">閉じる</button>
+        <button onclick="saveSettings()" class="flex-[2] bg-blue-600 text-white font-bold text-base sm:text-lg py-3 rounded-xl shadow-md hover:bg-blue-700 active:translate-y-1 transition-colors">保存する</button>
       </div>
     </div>
   </div>
@@ -660,7 +698,7 @@
     <!-- ★ 入力タブコンテンツ ★ -->
     <div id="tabInput">
       <!-- 上部ハイライトエリア -->
-      <div class="card mb-8 border-4 border-blue-500 text-center py-8 shadow-md" style="background: linear-gradient(180deg, #e3ebf4, #d7e2ee);">
+      <div id="topHighlightArea" class="card mb-8 border-4 border-blue-500 text-center py-8 shadow-md" style="background: linear-gradient(180deg, #e3ebf4, #d7e2ee);">
 
         <!-- タイトル -->
         <div class="flex justify-center items-center text-[28px] sm:text-[34px] mb-3 mt-1">
@@ -686,7 +724,7 @@
           
           <div class="border-t-2 border-amber-200 mx-auto w-4/5 mb-4"></div>
           
-          <div class="text-md sm:text-lg font-bold text-gray-600 mb-1">残業時間<span class="text-sm">（17:30以降）</span></div>
+          <div class="text-md sm:text-lg font-bold text-gray-600 mb-1">残業時間<span class="text-sm" id="topOverTimeLabel">（--:--以降）</span></div>
           <div id="topOverTime" class="text-2xl sm:text-3xl font-bold text-[#b45309] tracking-wider">--時間 --分</div>
         </div>
 
@@ -716,6 +754,13 @@
               style="background: linear-gradient(145deg, #fffbe6, #f0e3b8); border-radius: 14px; border: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.12), inset -3px -3px 6px rgba(255,255,255,0.9); padding: 16px;">
               <span id="topRestTime">-- 分</span>
             </div>
+          </div>
+          
+          <!-- 追加：メモ表示エリア（メモがある時だけ表示） -->
+          <div id="topMemoArea" class="hidden flex flex-col items-center w-[95%] sm:w-5/6 mt-3 px-2">
+            <div class="text-lg sm:text-2xl font-bold text-gray-600 mb-2 translate-y-[3px]">📝 メモ</div>
+            <div id="topMemoText" class="w-full min-h-[3.5rem] text-base sm:text-lg font-medium text-gray-700 whitespace-pre-wrap break-words leading-relaxed transition-colors duration-300" 
+              style="background: linear-gradient(145deg, #ffffff, #f3f4f6); border-radius: 14px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.12), inset -3px -3px 6px rgba(255,255,255,0.9); padding: 14px 24px; text-align: left;"></div>
           </div>
         </div>
 
@@ -752,7 +797,7 @@
             </div>
             
             <p class="text-sm text-gray-500 leading-relaxed mb-6 text-left sm:text-center">
-              ※8:30以外で出勤する場合は、「時間差出勤」から入力してください
+              ※通常以外で出勤する場合は、「時間差出勤」から入力してください
             </p>
             
             <div class="time-input-row flex justify-center items-center gap-2 sm:gap-4 bg-white py-6 px-4 rounded-xl border-2 border-blue-100 shadow-inner">
@@ -916,7 +961,7 @@
         
         <p class="text-xs sm:text-sm text-gray-500 font-bold mt-1 mb-4 leading-relaxed">
           ※81時間超過を防ぐため、<br>
-          79時間を目安に調整すると安心です💡
+          78時間を目安に調整すると安心です💡
         </p>
 
         <div id="warningMessage" class="hidden"></div>
@@ -943,6 +988,9 @@
     let currentRestMode = null; // 'normal' | 'flex' | 'none' | null
     let defaultRestTotal = 60; // 通常休憩の初期値（設定で変更可能）
     let defaultRestStartTotalMins = 12 * 60 + 30; // 昼休憩開始時刻（初期設定12:30）
+    let defaultContractStartTotalMins = 8 * 60 + 30; // 契約開始時刻（初期設定08:30）
+    let defaultContractEndTotalMins = 17 * 60 + 30; // 契約終了時刻（残業開始時刻、初期設定17:30）
+    let defaultContractStartStr = '08:30'; // 契約開始時刻の文字列
     let flexRestMinutes = 30;
     let isEveningRestAdded = false;
     let eveningRestMinutes = 30;
@@ -993,12 +1041,15 @@
       const todayRecord = workRecords.find(r => r.date === todayStr);
       const inputFormArea = document.getElementById('inputFormArea');
       const editGuide = document.getElementById('editGuideMessage');
+      const topHighlightArea = document.getElementById('topHighlightArea');
 
       if (todayRecord) {
+        if (topHighlightArea) topHighlightArea.classList.remove('hidden');
         if (inputFormArea) inputFormArea.classList.add('hidden');
         if (editGuide) editGuide.classList.remove('hidden');
         updateTopDisplayBg(true);
       } else {
+        if (topHighlightArea) topHighlightArea.classList.add('hidden');
         if (inputFormArea) inputFormArea.classList.remove('hidden');
         if (editGuide) editGuide.classList.add('hidden');
         updateTopDisplayBg(false);
@@ -1032,7 +1083,7 @@
     }
 
     function updateAllInputBgs() {
-      ['startHour', 'startMinute', 'endHour', 'endMinute', 'settingRestStartHour', 'settingRestStartMinute'].forEach(id => {
+      ['startHour', 'startMinute', 'endHour', 'endMinute', 'settingRestStartHour', 'settingRestStartMinute', 'settingContractStartHour', 'settingContractStartMinute', 'settingContractEndHour', 'settingContractEndMinute', 'settingLastName', 'settingFirstName'].forEach(id => {
         const el = document.getElementById(id);
         if (el) updateInputBg(el);
       });
@@ -1085,8 +1136,20 @@
       setupTimeInput('startMinute');
       setupTimeInput('endHour', 'endMinute');
       setupTimeInput('endMinute');
+      setupTimeInput('settingContractStartHour', 'settingContractStartMinute');
+      setupTimeInput('settingContractStartMinute', 'settingContractEndHour');
+      setupTimeInput('settingContractEndHour', 'settingContractEndMinute');
+      setupTimeInput('settingContractEndMinute');
       setupTimeInput('settingRestStartHour', 'settingRestStartMinute');
       setupTimeInput('settingRestStartMinute');
+
+      ['settingLastName', 'settingFirstName'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+          el.addEventListener('input', () => updateInputBg(el));
+          el.addEventListener('blur', () => updateInputBg(el));
+        }
+      });
 
       loadSettingsData();
       resetFormUI();
@@ -1124,8 +1187,9 @@
       btnNormal.className = "flex-1 py-5 px-2 text-xl sm:text-2xl font-bold btn-3d-flat is-active-blue";
       btnFlex.className = "flex-1 py-5 px-2 text-xl sm:text-2xl font-bold btn-3d-flat";
 
-      startHour.value = "08";
-      startMinute.value = "30";
+      const [h, m] = defaultContractStartStr.split(':');
+      startHour.value = h;
+      startMinute.value = m;
       startHour.disabled = true;
       startMinute.disabled = true;
 
@@ -1298,7 +1362,8 @@
         endTotal += 24 * 60; 
       }
       
-      const limitTime = 17 * 60 + 30; 
+      // 契約時間（残業開始時刻）を設定値から使用
+      const limitTime = defaultContractEndTotalMins; 
 
       let workMinutes = 0;
       let overMinutes = 0;
@@ -1421,6 +1486,16 @@
       if(topRestTimeEl) topRestTimeEl.textContent = displayRest;
       if(topWorkTimeEl) topWorkTimeEl.textContent = displayWorkTime;
       if(topOverTimeEl) topOverTimeEl.textContent = displayOverTime;
+
+      // メモの表示判定
+      const topMemoArea = document.getElementById('topMemoArea');
+      const topMemoText = document.getElementById('topMemoText');
+      if (targetRecord && targetRecord.memo && targetRecord.memo.trim() !== '') {
+        if (topMemoText) topMemoText.textContent = targetRecord.memo;
+        if (topMemoArea) topMemoArea.classList.remove('hidden');
+      } else {
+        if (topMemoArea) topMemoArea.classList.add('hidden');
+      }
     }
 
     function loadLocalData() {
@@ -1958,7 +2033,7 @@
       const limitM = String(alertLimitMins % 60).padStart(2, '0');
       const limitTimeStr = `${limitH}:${limitM}`;
 
-      if (startTime === '08:30' && endTotalMins <= alertLimitMins && baseRest === defaultRestTotal) {
+      if (startTime === defaultContractStartStr && endTotalMins <= alertLimitMins && baseRest === defaultRestTotal) {
         document.getElementById('shortWorkRestText').innerHTML = `退勤時間が${limitTimeStr}以内ですが、<br>昼休憩${defaultRestTotal}分が選択されています。<br><br>内容に相違がないか<br>確認してください。`;
         pendingRecordData = recordData;
         document.getElementById('shortWorkRestConfirmModal').classList.remove('hidden');
@@ -2097,6 +2172,9 @@
       const inputFormArea = document.getElementById('inputFormArea');
       if (inputFormArea) inputFormArea.classList.add('hidden');
       
+      const topHighlightArea = document.getElementById('topHighlightArea');
+      if (topHighlightArea) topHighlightArea.classList.remove('hidden');
+
       updateTopDisplayBg(true);
 
       isEditMode = false;
@@ -2124,15 +2202,53 @@
          defaultRestStartTotalMins = 12 * 60 + 30; // 設定がない場合は12:30
       }
 
+      // 契約勤務時間（開始）の読み込み
+      const savedContractStartH = localStorage.getItem('contractStartHour');
+      const savedContractStartM = localStorage.getItem('contractStartMinute');
+      
+      if (savedContractStartH !== null && savedContractStartM !== null) {
+         defaultContractStartTotalMins = (parseInt(savedContractStartH) || 0) * 60 + (parseInt(savedContractStartM) || 0);
+         defaultContractStartStr = `${String(savedContractStartH).padStart(2, '0')}:${String(savedContractStartM).padStart(2, '0')}`;
+      } else {
+         defaultContractStartTotalMins = 8 * 60 + 30; // 設定がない場合は08:30
+         defaultContractStartStr = '08:30';
+      }
+
+      // 契約勤務時間（終了）の読み込み（残業開始の基準）
+      const savedContractH = localStorage.getItem('contractEndHour');
+      const savedContractM = localStorage.getItem('contractEndMinute');
+      
+      let displayContract = '';
+      if (savedContractH !== null && savedContractM !== null) {
+         defaultContractEndTotalMins = (parseInt(savedContractH) || 0) * 60 + (parseInt(savedContractM) || 0);
+         displayContract = `${String(savedContractH).padStart(2, '0')}:${String(savedContractM).padStart(2, '0')}`;
+      } else {
+         defaultContractEndTotalMins = 17 * 60 + 30; // 設定がない場合は17:30
+         displayContract = '17:30';
+      }
+
+      const userBox = document.getElementById('headerUserBox');
       const nameDisplay = document.getElementById('headerUserName');
+      const contractDisplay = document.getElementById('headerUserContract');
       
       const fullName = `${lastName} ${firstName}`.trim();
       if (fullName) {
         nameDisplay.textContent = icon ? `${icon} ${fullName}` : fullName;
-        nameDisplay.style.display = 'flex'; 
+        contractDisplay.textContent = `定時：${defaultContractStartStr} ～ ${displayContract}`;
+        userBox.style.display = 'flex'; 
       } else {
-        nameDisplay.textContent = '';
-        nameDisplay.style.display = 'none';
+        userBox.style.display = 'none';
+      }
+
+      const overTimeLabel = document.getElementById('topOverTimeLabel');
+      if (overTimeLabel) {
+        overTimeLabel.textContent = `（${displayContract}以降）`;
+      }
+
+      // 通常出勤ボタンの時間を更新
+      const btnNormalCommute = document.getElementById('btnNormal');
+      if (btnNormalCommute) {
+        btnNormalCommute.innerHTML = `通常出勤<br><span class="text-lg font-normal">（${defaultContractStartStr}）</span>`;
       }
 
       updateNormalRestButton();
@@ -2155,6 +2271,24 @@
       currentUserIcon = localStorage.getItem('userIcon') || null;
       updateIconOptionsStyles();
       
+      const savedContractStartH = localStorage.getItem('contractStartHour');
+      const savedContractStartM = localStorage.getItem('contractStartMinute');
+      
+      const elContractStartHour = document.getElementById('settingContractStartHour');
+      if (elContractStartHour) elContractStartHour.value = savedContractStartH !== null ? String(savedContractStartH).padStart(2, '0') : '';
+      
+      const elContractStartMinute = document.getElementById('settingContractStartMinute');
+      if (elContractStartMinute) elContractStartMinute.value = savedContractStartM !== null ? String(savedContractStartM).padStart(2, '0') : '';
+
+      const savedContractH = localStorage.getItem('contractEndHour');
+      const savedContractM = localStorage.getItem('contractEndMinute');
+      
+      const elContractEndHour = document.getElementById('settingContractEndHour');
+      if (elContractEndHour) elContractEndHour.value = savedContractH !== null ? String(savedContractH).padStart(2, '0') : '';
+      
+      const elContractEndMinute = document.getElementById('settingContractEndMinute');
+      if (elContractEndMinute) elContractEndMinute.value = savedContractM !== null ? String(savedContractM).padStart(2, '0') : '';
+
       const savedStartH = localStorage.getItem('defaultRestStartHour');
       const savedStartM = localStorage.getItem('defaultRestStartMinute');
       
@@ -2228,6 +2362,18 @@
       const elFirstName = document.getElementById('settingFirstName');
       const firstName = elFirstName ? elFirstName.value : '';
       
+      const elContractStartHour = document.getElementById('settingContractStartHour');
+      const csHour = elContractStartHour ? elContractStartHour.value : '';
+      
+      const elContractStartMinute = document.getElementById('settingContractStartMinute');
+      const csMinute = elContractStartMinute ? elContractStartMinute.value : '';
+
+      const elContractEndHour = document.getElementById('settingContractEndHour');
+      const ceHour = elContractEndHour ? elContractEndHour.value : '';
+      
+      const elContractEndMinute = document.getElementById('settingContractEndMinute');
+      const ceMinute = elContractEndMinute ? elContractEndMinute.value : '';
+
       const elRestStartHour = document.getElementById('settingRestStartHour');
       const rsHour = elRestStartHour ? elRestStartHour.value : '';
       
@@ -2237,8 +2383,30 @@
       localStorage.setItem('lastName', lastName);
       localStorage.setItem('firstName', firstName);
       localStorage.setItem('userIcon', currentUserIcon || '');
+
+      // 契約時間（開始）の保存
+      if (csHour.trim() === '' && csMinute.trim() === '') {
+        localStorage.removeItem('contractStartHour');
+        localStorage.removeItem('contractStartMinute');
+      } else {
+        const csh = parseInt(csHour) || 0;
+        const csm = parseInt(csMinute) || 0;
+        localStorage.setItem('contractStartHour', csh);
+        localStorage.setItem('contractStartMinute', csm);
+      }
+
+      // 契約時間（終了）の保存 (空の場合は設定を消してデフォルトの17:30にする)
+      if (ceHour.trim() === '' && ceMinute.trim() === '') {
+        localStorage.removeItem('contractEndHour');
+        localStorage.removeItem('contractEndMinute');
+      } else {
+        const ch = parseInt(ceHour) || 0;
+        const cm = parseInt(ceMinute) || 0;
+        localStorage.setItem('contractEndHour', ch);
+        localStorage.setItem('contractEndMinute', cm);
+      }
       
-      // 両方空白のまま保存された場合は、初期設定(12:30)に戻す
+      // 休憩開始時刻の保存
       if (rsHour.trim() === '' && rsMinute.trim() === '') {
         localStorage.removeItem('defaultRestStartHour');
         localStorage.removeItem('defaultRestStartMinute');
@@ -2262,6 +2430,10 @@
       document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
       
       resetFormUI();
+      
+      const topHighlightArea = document.getElementById('topHighlightArea');
+      if (topHighlightArea) topHighlightArea.classList.add('hidden');
+
       updateTopDisplayBg(false);
       updateTopDisplay(); 
       isEditMode = false;
@@ -2445,6 +2617,10 @@
       if (!record) {
         resetFormUI();
         document.getElementById('date').value = dateStr;
+        
+        const topHighlightArea = document.getElementById('topHighlightArea');
+        if (topHighlightArea) topHighlightArea.classList.add('hidden');
+
         updateTopDisplay();
         switchTab('input', true); 
         scrollToForm();
@@ -2475,7 +2651,7 @@
         if (record.isFlexCommute !== undefined) {
           currentCommuteMode = record.isFlexCommute ? 'flex' : 'normal';
         } else {
-          currentCommuteMode = (record.startTime !== "08:30") ? 'flex' : 'normal';
+          currentCommuteMode = (record.startTime !== defaultContractStartStr) ? 'flex' : 'normal';
         }
 
         if (currentCommuteMode === 'flex') {
@@ -2524,6 +2700,9 @@
         document.getElementById('memoInput').value = '';
       }
       autoResizeMemo(document.getElementById('memoInput')); // 修正時に高さを自動調整
+
+      const topHighlightArea = document.getElementById('topHighlightArea');
+      if (topHighlightArea) topHighlightArea.classList.remove('hidden');
 
       const inputFormArea = document.getElementById('inputFormArea');
       if (inputFormArea) inputFormArea.classList.remove('hidden');
